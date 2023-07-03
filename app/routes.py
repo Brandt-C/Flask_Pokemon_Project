@@ -42,11 +42,12 @@ def pokedex(name):
     if request.method == "POST":
         name=name.title()
         catch = CatchPokemon.query.filter_by(name=name).first()
-        pokemon_id = catch.id
-        if "catch" in request.form:
-            return redirect(url_for('caught', pokemon_id=pokemon_id))
-        elif "release" in request.form:
-            return redirect(url_for('release', pokemon_id=pokemon_id))
+        if catch:
+            pokemon_id = catch.id
+            if "catch" in request.form:
+                return redirect(url_for('caught', pokemon_id=pokemon_id))
+            elif "release" in request.form:
+                return redirect(url_for('release', pokemon_id=pokemon_id))
     pokemon = Pokemon_data(name)
     pokemon_id = pokemon.id()
     poke = pokemon.pokedex()
@@ -142,9 +143,10 @@ def team():
     # my_catches is all caught pokemon objects
         # getting number of caught pokemon and number of empty slots
     my_catches = current_user.caught
-    num_catches = len(my_catches)
-    empties = 5 - num_catches
-    top_catch = my_catches[0]
+    if my_catches:
+        num_catches = len(my_catches)
+        empties = 5 - num_catches
+        top_catch = my_catches[0]
 
     return render_template("myteam.html", num_catches=num_catches, catches=my_catches, empties=empties, top=top_catch)
 
